@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import https from 'https'
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -23,8 +23,8 @@ export default defineConfig({
             });
             const data = await response.json();
 
-            if (data && data.results) {
-              const images = data.results.map((r: any) => ({
+            if (data && (data as any).results) {
+              const images = (data as any).results.map((r: any) => ({
                 id: r.id,
                 url: r.urls.regular,
                 thumb: r.urls.small,
