@@ -20,13 +20,14 @@ export const ImageSearchPanel: React.FC<ImageSearchPanelProps> = ({ onClose, onI
     const [images, setImages] = useState<PinterestImage[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isNsfw, setIsNsfw] = useState(false);
 
-    const searchImages = async (searchQuery: string) => {
+    const searchImages = async (searchQuery: string, forceNsfw: boolean = isNsfw) => {
         if (!searchQuery.trim()) return;
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch(`/api/images?q=${encodeURIComponent(searchQuery)}`);
+            const res = await fetch(`/api/images?q=${encodeURIComponent(searchQuery)}&nsfw=${forceNsfw}`);
             const data = await res.json();
             if (data.images) {
                 setImages(data.images);
@@ -74,6 +75,24 @@ export const ImageSearchPanel: React.FC<ImageSearchPanelProps> = ({ onClose, onI
                 <button className="search-btn" onClick={() => searchImages(query)} disabled={loading}>
                     Search
                 </button>
+            </div>
+
+            <div style={{ padding: '0 16px 8px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <input
+                    type="checkbox"
+                    id="nsfw-toggle"
+                    checked={isNsfw}
+                    onChange={(e) => {
+                        const val = e.target.checked;
+                        setIsNsfw(val);
+                        if (query.trim()) {
+                            searchImages(query, val);
+                        }
+                    }}
+                />
+                <label htmlFor="nsfw-toggle" style={{ fontSize: 12, color: 'var(--text-secondary)', cursor: 'pointer', userSelect: 'none' }}>
+                    Enable NSFW Web Results
+                </label>
             </div>
 
             <div className="image-results">

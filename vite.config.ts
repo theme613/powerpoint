@@ -12,10 +12,13 @@ export default defineConfig({
         server.middlewares.use('/api/images', async (req, res) => {
           const url = new URL(req.url || '', `http://${req.headers.host}`);
           const query = url.searchParams.get('q') || 'nature';
+          const enableNsfw = url.searchParams.get('nsfw') === 'true';
 
           try {
             // Use Unsplash front-end API for public searches
-            const apiUrl = `https://unsplash.com/napi/search/photos?query=${encodeURIComponent(query)}&per_page=30`;
+            // Unsplash defaults to filtering out NSFW. Adding content_filter=high for safe, low for NSFW
+            const contentFilter = enableNsfw ? 'low' : 'high';
+            const apiUrl = `https://unsplash.com/napi/search/photos?query=${encodeURIComponent(query)}&per_page=30&content_filter=${contentFilter}`;
             const response = await fetch(apiUrl, {
               headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
