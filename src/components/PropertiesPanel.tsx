@@ -1,17 +1,32 @@
 import React from 'react';
-import type { SlideElement } from '../types';
+import type { Slide, SlideElement } from '../types';
+import { ArrowUp, ArrowDown, ArrowUpToLine, ArrowDownToLine } from 'lucide-react';
 
 interface PropertiesPanelProps {
+    slide: Slide;
     element: SlideElement | null;
     onUpdateElement: (id: string, updates: Partial<SlideElement>) => void;
+    onUpdateSlide: (id: string, updates: Partial<Slide>) => void;
+    onReorderElement: (direction: 'forward' | 'backward' | 'front' | 'back') => void;
 }
 
-export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ element, onUpdateElement }) => {
+export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ slide, element, onUpdateElement, onUpdateSlide, onReorderElement }) => {
     if (!element) {
         return (
-            <aside className="properties-panel empty">
-                <div className="empty-state">
-                    Select an element to edit its properties
+            <aside className="properties-panel">
+                <div className="panel-header">
+                    <h3>Slide Properties</h3>
+                </div>
+                <div className="panel-section">
+                    <h4>Background</h4>
+                    <div className="prop-row">
+                        <label>Color:</label>
+                        <input
+                            type="color"
+                            value={slide.backgroundColor}
+                            onChange={e => onUpdateSlide(slide.id, { backgroundColor: e.target.value })}
+                        />
+                    </div>
                 </div>
             </aside>
         );
@@ -44,6 +59,24 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ element, onUpd
                 <div className="prop-row">
                     <label>H:</label>
                     <input type="number" value={element.height} onChange={e => handleUpdate({ height: parseInt(e.target.value) || 0 })} />
+                </div>
+            </div>
+
+            <div className="panel-section">
+                <h4>Layer Order</h4>
+                <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                    <button className="toolbar-btn" style={{ height: 40, minWidth: 40 }} onClick={() => onReorderElement('front')} title="Bring to Front">
+                        <ArrowUpToLine size={16} />
+                    </button>
+                    <button className="toolbar-btn" style={{ height: 40, minWidth: 40 }} onClick={() => onReorderElement('forward')} title="Bring Forward">
+                        <ArrowUp size={16} />
+                    </button>
+                    <button className="toolbar-btn" style={{ height: 40, minWidth: 40 }} onClick={() => onReorderElement('backward')} title="Send Backward">
+                        <ArrowDown size={16} />
+                    </button>
+                    <button className="toolbar-btn" style={{ height: 40, minWidth: 40 }} onClick={() => onReorderElement('back')} title="Send to Back">
+                        <ArrowDownToLine size={16} />
+                    </button>
                 </div>
             </div>
 

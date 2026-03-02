@@ -8,6 +8,7 @@ export interface BaseElement {
   width: number;
   height: number;
   rotation?: number;
+  zIndex?: number;
 }
 
 export interface TextElement extends BaseElement {

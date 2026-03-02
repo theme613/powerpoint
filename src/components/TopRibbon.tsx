@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Type, Square, Circle, Image as ImageIcon, Play } from 'lucide-react';
+import { Type, Square, Circle, Image as ImageIcon, Play, Bold, Italic, AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
+import type { SlideElement, TextElement } from '../types';
 
 interface TopRibbonProps {
     onInsertText: () => void;
@@ -7,11 +8,16 @@ interface TopRibbonProps {
     onInsertImage: () => void;
     onOpenImageSearch: () => void;
     onPlay: () => void;
+    activeElement: SlideElement | null;
+    onUpdateElement: (id: string, updates: Partial<SlideElement>) => void;
 }
 
 const TAB_NAMES = ['Home', 'Insert', 'Design', 'Transitions', 'Animations', 'Slide Show'];
 
-export const TopRibbon: React.FC<TopRibbonProps> = ({ onInsertText, onInsertShape, onInsertImage, onOpenImageSearch, onPlay }) => {
+export const TopRibbon: React.FC<TopRibbonProps> = ({
+    onInsertText, onInsertShape, onInsertImage, onOpenImageSearch, onPlay,
+    activeElement, onUpdateElement
+}) => {
     const [activeTab, setActiveTab] = useState('Home');
 
     return (
@@ -61,6 +67,48 @@ export const TopRibbon: React.FC<TopRibbonProps> = ({ onInsertText, onInsertShap
                             <Play size={20} fill="currentColor" />
                             <span>Play</span>
                         </button>
+
+                        {activeElement?.type === 'text' && (
+                            <>
+                                <div className="toolbar-divider" />
+                                <button
+                                    className={`toolbar-btn ${(activeElement as TextElement).fontWeight === 'bold' ? 'active' : ''}`}
+                                    onClick={() => onUpdateElement(activeElement.id, { fontWeight: (activeElement as TextElement).fontWeight === 'bold' ? 'normal' : 'bold' })}
+                                    title="Bold"
+                                >
+                                    <Bold size={18} />
+                                </button>
+                                <button
+                                    className={`toolbar-btn ${(activeElement as TextElement).fontStyle === 'italic' ? 'active' : ''}`}
+                                    onClick={() => onUpdateElement(activeElement.id, { fontStyle: (activeElement as TextElement).fontStyle === 'italic' ? 'normal' : 'italic' })}
+                                    title="Italic"
+                                >
+                                    <Italic size={18} />
+                                </button>
+                                <div className="toolbar-divider" />
+                                <button
+                                    className={`toolbar-btn ${(activeElement as TextElement).textAlign === 'left' ? 'active' : ''}`}
+                                    onClick={() => onUpdateElement(activeElement.id, { textAlign: 'left' })}
+                                    title="Align Left"
+                                >
+                                    <AlignLeft size={18} />
+                                </button>
+                                <button
+                                    className={`toolbar-btn ${(activeElement as TextElement).textAlign === 'center' || !(activeElement as TextElement).textAlign ? 'active' : ''}`}
+                                    onClick={() => onUpdateElement(activeElement.id, { textAlign: 'center' })}
+                                    title="Align Center"
+                                >
+                                    <AlignCenter size={18} />
+                                </button>
+                                <button
+                                    className={`toolbar-btn ${(activeElement as TextElement).textAlign === 'right' ? 'active' : ''}`}
+                                    onClick={() => onUpdateElement(activeElement.id, { textAlign: 'right' })}
+                                    title="Align Right"
+                                >
+                                    <AlignRight size={18} />
+                                </button>
+                            </>
+                        )}
                     </div>
                 )}
                 {activeTab === 'Insert' && (

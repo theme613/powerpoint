@@ -356,3 +356,49 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 .spinner { animation: spin 1s linear infinite; color: var(--pp-red); }
 .error-state { color: var(--pp-red); padding: 20px; text-align: center; font-size: 13px; }
+/* --- Resize and Rotate Handles --- */
+.resize-handle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: white;
+    border: 1px solid var(--pp-red);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
+}
+.resize-handle.nw { top: 0; left: 0; cursor: nwse-resize; }
+.resize-handle.n { top: 0; left: 50%; cursor: ns-resize; }
+.resize-handle.ne { top: 0; left: 100%; cursor: nesw-resize; }
+.resize-handle.w { top: 50%; left: 0; cursor: ew-resize; }
+.resize-handle.e { top: 50%; left: 100%; cursor: ew-resize; }
+.resize-handle.sw { top: 100%; left: 0; cursor: nesw-resize; }
+.resize-handle.s { top: 100%; left: 50%; cursor: ns-resize; }
+.resize-handle.se { top: 100%; left: 100%; cursor: nwse-resize; }
+
+.rotate-line {
+    position: absolute;
+    width: 1px;
+    height: 24px;
+    background: var(--pp-red);
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.rotate-handle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: white;
+    border: 1px solid var(--pp-red);
+    border-radius: 50%;
+    top: -30px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    cursor: grab;
+    pointer-events: auto;
+}
+.rotate-handle:active {
+    cursor: grabbing;
+}

@@ -156,6 +156,38 @@ function App() {
     setActiveElementId(null);
   }, [activeElementId, activeSlideId]);
 
+  const handleReorderElement = useCallback((direction: 'forward' | 'backward' | 'front' | 'back') => {
+    if (!activeElementId || !activeSlideId) return;
+    setPresentation(prev => ({
+      ...prev,
+      slides: prev.slides.map(s => {
+        if (s.id !== activeSlideId) return s;
+        const els = [...s.elements];
+        const idx = els.findIndex(e => e.id === activeElementId);
+        if (idx === -1) return s;
+
+        const [el] = els.splice(idx, 1);
+        if (direction === 'forward') {
+          els.splice(Math.min(els.length, idx + 1), 0, el);
+        } else if (direction === 'backward') {
+          els.splice(Math.max(0, idx - 1), 0, el);
+        } else if (direction === 'front') {
+          els.push(el);
+        } else if (direction === 'back') {
+          els.unshift(el);
+        }
+
+        // Update zIndex explicit tags based on new array order to make it explicit
+        const updatedEls = els.map((e, i) => ({ ...e, zIndex: i }));
+
+        return {
+          ...s,
+          elements: updatedEls
+        };
+      })
+    }));
+  }, [activeElementId, activeSlideId]);
+
   // Keybindings
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -246,6 +278,8 @@ function App() {
         onInsertImage={handleInsertImage}
         onOpenImageSearch={() => setIsImageSearchOpen(true)}
         onPlay={() => setIsPlaying(true)}
+        activeElement={activeElement}
+        onUpdateElement={handleUpdateElement}
       />
 
       <main className="main-content">
@@ -273,8 +307,11 @@ function App() {
           />
         ) : (
           <PropertiesPanel
+            slide={activeSlide}
             element={activeElement}
             onUpdateElement={handleUpdateElement}
+            onUpdateSlide={updateSlide}
+            onReorderElement={handleReorderElement}
           />
         )}
       </main>
